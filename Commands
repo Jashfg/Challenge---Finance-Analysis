@@ -1,0 +1,83 @@
+#1)What are the names of all the customers who live in New York?
+select firstname , lastname , city from customers 
+where city="new york";
+
+#2)What is the total number of accounts in the Accounts table?
+select count(accountid) as total_number_of_accounts from accounts;
+
+#3)What is the total balance of all checking accounts?
+select sum(balance) , accounttype from accounts
+where accounttype="checking";
+
+#4)What is the total balance of all accounts associated with customers who live in Los Angeles?
+select city ,  sum(balance) as total_balance  from customers 
+inner join accounts
+on
+customers.customerid=accounts.customerid
+where city="los angeles";
+
+#5)Which branch has the highest average account balance?
+select branchname , round(avg(balance)) as highest_avg_balance  from branches 
+inner join accounts
+on
+branches.branchid=accounts.branchid
+group by branchname 
+order by highest_avg_balance desc
+limit 1;
+
+#6)Which customer has the highest current balance in their accounts?
+select  customers.customerid , concat(firstname ," ",lastname) as customer_name , sum(balance) as total_balance from customers
+inner join accounts
+on
+customers.customerid=accounts.customerid
+group by customer_name , customers.customerid
+order by total_balance desc 
+limit 1;
+
+#7)Which customer has made the most transactions in the Transactions table?
+select  customers.customerid , concat(firstname ," ",lastname) as customer_name , count(transactionid)as total_transactions 
+from customers
+inner join accounts
+on
+customers.customerid=accounts.customerid
+inner join transactions
+on transactions.accountid=accounts.accountid
+group by  customer_name , customers.customerid
+order by  total_transactions  desc
+limit 1;
+
+
+#8)Which branch has the highest total balance across all of its accounts?
+select branches.branchid , branches.branchname , accounts.accounttype , sum(balance) as total_balance from branches
+inner join accounts
+on
+branches.branchid=accounts.branchid
+group by  branches.branchid , branches.branchname , accounts.accounttype
+order by total_balance desc
+LIMIT 1;
+
+#9)Which customer has the highest total balance across all of their accounts, including savings and checking accounts?
+select customers.customerid , concat(firstname , " " ,lastname) as customer_name   , sum(balance) as highest_total_balance
+from customers
+inner join accounts
+on
+customers.customerid=accounts.customerid
+group by customers.customerid , customer_name  
+order by highest_total_balance desc 
+limit 1 ;
+
+#10)Which branch has the highest number of transactions in the Transactions table?
+SELECT
+    branches.branchname,
+    COUNT(transactions.transactionid) AS number_of_transactions
+FROM
+    branches
+INNER JOIN
+    accounts ON branches.branchid = accounts.branchid
+INNER JOIN
+    transactions ON accounts.accountid = transactions.accountid
+GROUP BY
+    branches.branchname
+ORDER BY
+    number_of_transactions DESC
+limit 1 ;
